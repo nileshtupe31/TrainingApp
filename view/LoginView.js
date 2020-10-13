@@ -6,6 +6,7 @@ import { CheckBox, Header, InputText } from '../common';
 import { Button } from '../common/Button';
 import { APP_BACKGROUND_COLOR, APP_THEME_COLOR, CONTAINER_COLOR } from '../Constants/Colors';
 import { BASE_URL, END_POINTS } from '../Constants/constants';
+import { ProcessIndicator } from '../common/ProcessIndicator';
 
 export default class LoginView extends PureComponent {
   constructor(props) {
@@ -13,7 +14,8 @@ export default class LoginView extends PureComponent {
     this.state = {
         userName: "",
         password: "",
-        isSecureText: true
+        isSecureText: true,
+        isFetching: false
     };
   }
 
@@ -44,13 +46,22 @@ export default class LoginView extends PureComponent {
                      }}
 
                 >Show Password</CheckBox>
-                <Button
+                {
+                    !this.state.isFetching &&
+
+                    <Button
                     onPress={() => {
                         console.log("User Name"+ this.state.userName);
                         console.log("Password"+ this.state.password);
+                        this.setState({...this.state, isFetching:true})
                         logIn(this.state.userName, this.state.password)
                     }}
-                >Log In</Button>
+                    >Log In</Button>
+                }
+
+                { this.state.isFetching &&   
+                    <ProcessIndicator />
+                }
 
             </View>
         </View>
