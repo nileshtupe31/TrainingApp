@@ -1,13 +1,16 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, Text } from 'react-native';
-import { APP_THEME_COLOR } from '../Constants/Colors';
+import { APP_THEME_COLOR, BUTTON_SELECTED_COLOR } from '../Constants/Colors';
 
 const Button = ({
-    children, style, onPress
+    children, style, onPress, isSelected = false, isEnabled = true
 }) => (
     <TouchableOpacity 
-        style={styles.container}
+        style={[styles.container, 
+            isSelected?
+            {backgroundColor: BUTTON_SELECTED_COLOR}:{backgroundColor: APP_THEME_COLOR}]}
         onPress={() => {onPress()}}
+        disabled={!isEnabled}
     >
         <Text style = {styles.textStyle}>{children}</Text>
     </TouchableOpacity>
@@ -20,7 +23,6 @@ const styles = StyleSheet.create({
         color:'white'
     },
     container:{
-        backgroundColor: APP_THEME_COLOR,
         marginVertical: 10,
         marginHorizontal: 5,
         borderWidth:1,

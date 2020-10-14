@@ -1,7 +1,12 @@
 import React, {Component} from 'react';
+import 'react-native-gesture-handler';
 import { StyleSheet, Text, View } from 'react-native';
-import {CheckBox, Header} from "./common";
-import LoginView from "./view/LoginView";
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import reducer from "./reducers";
+import Router from "./view/Router";
+
+const store = createStore(reducer,{})
 
 class App extends Component {
 
@@ -20,7 +25,9 @@ class App extends Component {
    const {main } = styles
   return (
     <View style={main}>
-      <LoginView />
+      <Provider store={store}>
+        <Router />
+      </Provider>
     </View>
   )
  }

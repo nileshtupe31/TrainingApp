@@ -2,21 +2,17 @@ import Axios from 'axios';
 import React, { PureComponent } from 'react';
 import {  View, Text, StyleSheet } from 'react-native';
 import axios from "axios";
+import { connect } from "react-redux";
+import { userNameChanged, passwordChanged, secureTextChanged } from "../actions";
 import { CheckBox, Header, InputText } from '../common';
 import { Button } from '../common/Button';
 import { APP_BACKGROUND_COLOR, APP_THEME_COLOR, CONTAINER_COLOR } from '../Constants/Colors';
 import { BASE_URL, END_POINTS } from '../Constants/constants';
 import { ProcessIndicator } from '../common/ProcessIndicator';
 
-export default class LoginView extends PureComponent {
+class LoginView extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = {
-        userName: "",
-        password: "",
-        isSecureText: true,
-        isFetching: false
-    };
   }
 
   render() {
@@ -28,38 +24,42 @@ export default class LoginView extends PureComponent {
                 <InputText 
                     placeholderText= "User Name"
                     onValueChange = {(text) => {
-                        this.setState({...this.state, userName:text})
+                        this.props.userNameChanged(text)
                     }}
-                    value = {this.state.userName}
+                    value = {this.props.userName}
                 />
                 <InputText 
                     placeholderText = "Password"
-                    secureText={this.state.isSecureText}
+                    secureText={this.props.isSecureText}
                     onValueChange = {(text) => {
-                        this.setState({...this.state, password:text})
+                        this.props.passwordChanged(text)
                     }}
-                    value = {this.state.password}
+                    value = {this.props.password}
                 />
                 <CheckBox
                      onValueChange = {(checked) => {
-                        this.setState({...this.state, isSecureText:!checked})
+                         this.props.secureTextChanged(checked)
                      }}
+                     value = {this.props.isSecureText}
 
                 >Show Password</CheckBox>
                 {
-                    !this.state.isFetching &&
+                    !this.props.isFetching  &&
 
                     <Button
                     onPress={() => {
-                        console.log("User Name"+ this.state.userName);
-                        console.log("Password"+ this.state.password);
-                        this.setState({...this.state, isFetching:true})
-                        logIn(this.state.userName, this.state.password)
+
+                        this.props.navigation.navigate("Start",{})
+
+                        // console.log("User Name"+ this.state.userName);
+                        // console.log("Password"+ this.state.password);
+                        // this.setState({...this.state, isFetching:true})
+                        // logIn(this.state.userName, this.state.password)
                     }}
                     >Log In</Button>
                 }
 
-                { this.state.isFetching &&   
+                { this.props.isFetching &&   
                     <ProcessIndicator />
                 }
 
@@ -108,3 +108,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     }
 });
+
+const mapStateToProps = (state) => {
+    return (
+        {
+            userName:state.login.userName,
+            password:state.login.password,
+            isSecureText:state.login.isSecureText,
+            isFetching:false        
+        }
+    )
+}
+
+export default connect(mapStateToProps, {
+    userNameChanged,
+    passwordChanged,
+    secureTextChanged
+})(LoginView)
