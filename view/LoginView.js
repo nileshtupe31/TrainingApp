@@ -3,7 +3,9 @@ import React, { PureComponent } from 'react';
 import {  View, Text, StyleSheet } from 'react-native';
 import axios from "axios";
 import { connect } from "react-redux";
-import { userNameChanged, passwordChanged, secureTextChanged } from "../actions";
+import { 
+    userNameChanged, passwordChanged, secureTextChanged, login 
+} from "../actions";
 import { CheckBox, Header, InputText } from '../common';
 import { Button } from '../common/Button';
 import { APP_BACKGROUND_COLOR, APP_THEME_COLOR, CONTAINER_COLOR } from '../Constants/Colors';
@@ -13,6 +15,12 @@ import { ProcessIndicator } from '../common/ProcessIndicator';
 class LoginView extends PureComponent {
   constructor(props) {
     super(props);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.userId != null && prevProps.userId == null ) {
+        this.props.navigation.navigate("Start",{})
+    }
   }
 
   render() {
@@ -49,17 +57,17 @@ class LoginView extends PureComponent {
                     <Button
                     onPress={() => {
 
-                        this.props.navigation.navigate("Start",{})
-
-                        // console.log("User Name"+ this.state.userName);
-                        // console.log("Password"+ this.state.password);
-                        // this.setState({...this.state, isFetching:true})
-                        // logIn(this.state.userName, this.state.password)
+                        // this.props.navigation.navigate("Start",{})
+                        this.props.login(this.props.userName, this.props.password)
                     }}
                     >Log In</Button>
                 }
+                {
+                    this.props.errorMessage && <Text style={{color:'red'}}>{this.props.errorMessage}</Text>
+                }
 
-                { this.props.isFetching &&   
+
+                { this.props.showLoading &&   
                     <ProcessIndicator />
                 }
 
@@ -68,22 +76,6 @@ class LoginView extends PureComponent {
       </View>
     );
   }
-}
-
-const logIn = (userName, password) => {
-    const url = BASE_URL + END_POINTS.login
-
-    const params = new URLSearchParams()
-    params.append('employeeId', userName)
-    params.append('password', password)
-    axios.post(url, params)
-    .then(res => {
-        console.log(JSON.stringify(res));
-
-    })
-    .catch(error => {
-        console.log(JSON.stringify(error));
-    })
 }
 
 
@@ -115,7 +107,10 @@ const mapStateToProps = (state) => {
             userName:state.login.userName,
             password:state.login.password,
             isSecureText:state.login.isSecureText,
-            isFetching:false        
+            isFetching:false,
+            userId:state.login.userId,
+            errorMessage:state.login.errorMessage,
+            showLoading:state.appState.isLoading        
         }
     )
 }
@@ -123,5 +118,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
     userNameChanged,
     passwordChanged,
-    secureTextChanged
+    secureTextChanged,
+    login
 })(LoginView)

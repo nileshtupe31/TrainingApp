@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import 'react-native-gesture-handler';
 import { StyleSheet, Text, View } from 'react-native';
-import { createStore } from "redux";
+import { applyMiddleware, createStore } from "redux";
+import thunk from "redux-thunk";
 import { Provider } from "react-redux";
 import reducer from "./reducers";
 import Router from "./view/Router";
 
-const store = createStore(reducer,{})
+const store = createStore(reducer,{}, applyMiddleware(thunk))
 
 class App extends Component {
 
